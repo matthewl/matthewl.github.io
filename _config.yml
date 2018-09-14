@@ -1,1 +1,4 @@
+title: Matthew Lang
+description: My web development notes
 theme: jekyll-theme-cayman
+permalink: /:title:output_ext

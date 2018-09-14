@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+
+    <!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>Creating a sitemap with Ruby on Rails | Matthew Lang</title>
+<meta name="generator" content="Jekyll v3.7.4" />
+<meta property="og:title" content="Creating a sitemap with Ruby on Rails" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="One of the easiest ways that you can improve your search engine rankings is by creating a sitemap of your SaaS product and submitting it to search engines. Sitemaps don’t replace the crawlers search engines use to index sites, but they can help those crawlers by providing extra metadata on the urls that make up your site, such as how often those pages are updated." />
+<meta property="og:description" content="One of the easiest ways that you can improve your search engine rankings is by creating a sitemap of your SaaS product and submitting it to search engines. Sitemaps don’t replace the crawlers search engines use to index sites, but they can help those crawlers by providing extra metadata on the urls that make up your site, such as how often those pages are updated." />
+<link rel="canonical" href="http://localhost:4000/creating-a-sitemap-with-ruby-on-rails.html" />
+<meta property="og:url" content="http://localhost:4000/creating-a-sitemap-with-ruby-on-rails.html" />
+<meta property="og:site_name" content="Matthew Lang" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2017-03-16T00:00:00+00:00" />
+<script type="application/ld+json">
+{"description":"One of the easiest ways that you can improve your search engine rankings is by creating a sitemap of your SaaS product and submitting it to search engines. Sitemaps don’t replace the crawlers search engines use to index sites, but they can help those crawlers by providing extra metadata on the urls that make up your site, such as how often those pages are updated.","@type":"BlogPosting","url":"http://localhost:4000/creating-a-sitemap-with-ruby-on-rails.html","headline":"Creating a sitemap with Ruby on Rails","dateModified":"2017-03-16T00:00:00+00:00","datePublished":"2017-03-16T00:00:00+00:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/creating-a-sitemap-with-ruby-on-rails.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#157878">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="stylesheet" href="/assets/css/style.css?v=f17d54814a164c30b1c73eedd61f56616b9cf6c0">
+  </head>
+  <body>
+    <header class="page-header" role="banner">
+      <h1 class="project-name"><a href="/">Matthew Lang</a></h1>
+      <h2 class="project-tagline">My web development notes</h2>
+    </header>
+
+    <main id="content" class="main-content" role="main">
+      <h1>Creating a sitemap with Ruby on Rails</h1>
+
+      <p>One of the easiest ways that you can improve your search engine rankings is by creating a sitemap of your SaaS product and submitting it to search engines. Sitemaps don’t replace the crawlers search engines use to index sites, but they can help those crawlers by providing extra metadata on the urls that make up your site, such as how often those pages are updated.</p>
+
+<p>If your site has content that changes over time, it helps to keep your sitemap updated so that search engines will be notified of those changes.</p>
+
+<p>Let’s build a basic sitemap for a Ruby on Rails application.</p>
+
+<h3 id="add-a-route-for-the-sitemap">Add a route for the sitemap</h3>
+
+<p>Using an “outside in” approach, we’ll start with the necessary route for the sitemap by updating the routes file, <code class="highlighter-rouge">routes.rb</code>.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">get</span> <span class="s1">'sitemap'</span><span class="p">,</span> <span class="ss">to: </span><span class="s1">'sitemap#index'</span><span class="p">,</span> <span class="ss">constraints: </span><span class="p">{</span> <span class="ss">format: </span><span class="s1">'xml'</span> <span class="p">}</span></code></pre></figure>
+
+<p>We only need the index action for our sitemap, so we can specify that the route uses the index action only. We also define a constraint on the route so that it only accepts XML requests which will be for the format of our sitemap file.</p>
+
+<h3 id="add-a-controller-for-the-sitemap">Add a controller for the sitemap</h3>
+
+<p>Now we’ll create a controller for our sitemap.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">SitemapController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>A sitemap is an XML document, so we’ll need to tell the action that we want to respond to any requests to the controller with XML. We can do that with the <code class="highlighter-rouge">respond_to</code> method on the controller.</p>
+
+<h3 id="add-an-action-that-renders-the-sitemap">Add an action that renders the sitemap</h3>
+
+<p>Next we’ll add the <code class="highlighter-rouge">index</code> action for our controller.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">index</span>
+  <span class="n">respond_to</span> <span class="k">do</span> <span class="o">|</span><span class="nb">format</span><span class="o">|</span>
+    <span class="nb">format</span><span class="p">.</span><span class="nf">xml</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>A sitemap is an XML document, so we’ll need to tell the action that we want to respond to any requests to the action with XML. We can do that with the <code class="highlighter-rouge">respond_to</code> block on the action.</p>
+
+<p>We’ll define the list of pages within the sitemap view (see below) rather than in the controller. We’ll set this up with the typical set of pages that can be found in most SaaS products, but if you have any other pages, feel free to add them in a similar fashion.</p>
+
+<h3 id="add-the-sitemap-view">Add the sitemap view</h3>
+
+<p>Next we’ll add the view for our sitemap.</p>
+
+<figure class="highlight"><pre><code class="language-html-erb" data-lang="html+erb">&lt;urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"&gt;
+  &lt;url&gt;
+    &lt;loc&gt;&lt;%= root_url %&gt;&lt;/loc&gt;
+    &lt;changefreq&gt;weekly&lt;/changefreq&gt;
+  &lt;/url&gt;
+  &lt;url&gt;
+    &lt;loc&gt;&lt;%= new_signup_url %&gt;&lt;/loc&gt;
+    &lt;changefreq&gt;weekly&lt;/changefreq&gt;
+  &lt;/url&gt;
+  &lt;url&gt;
+    &lt;loc&gt;&lt;%= pages_url %&gt;&lt;/loc&gt;
+    &lt;changefreq&gt;weekly&lt;/changefreq&gt;
+  &lt;/url&gt;
+  &lt;url&gt;
+    &lt;loc&gt;&lt;%= terms_url %&gt;&lt;/loc&gt;
+    &lt;changefreq&gt;weekly&lt;/changefreq&gt;
+  &lt;/url&gt;
+  &lt;url&gt;
+    &lt;loc&gt;&lt;%= privacy_url %&gt;&lt;/loc&gt;
+    &lt;changefreq&gt;weekly&lt;/changefreq&gt;
+  &lt;/url&gt;
+&lt;/urlset&gt;</code></pre></figure>
+
+<p>What we have added here is a set of URLs that we want to submit to the search engine. Each URL is contained within a set of <code class="highlighter-rouge">url</code> tags The URL itself is within the <code class="highlighter-rouge">loc</code> tags, and the frequency with which we want the search engine to check the page is noted within the <code class="highlighter-rouge">changefreq</code> tag.</p>
+
+<p>The valid options for the <code class="highlighter-rouge">changefreq</code> tag are hourly, daily, weekly, monthly, yearly, or never. If the page in question is unlikely to change very often, set the <code class="highlighter-rouge">changefreq</code> tag to monthly or even yearly. For other pages that change more frequently, like your key landing page(s), I recommend setting the <code class="highlighter-rouge">changefreq</code> tag to weekly.</p>
+
+<h3 id="updating-the-sitemap">Updating the sitemap</h3>
+
+<p>The sitemap contains a number of pages that aren’t likely to change or to be removed, but what about content that changes more frequently, like blog posts? Perhaps you have a blog on your SaaS product or even a group of product pages that are frequently updated. How do we include this changing content without having to manually amend the sitemap file each time?</p>
+
+<p>With Ruby on Rails it’s simple to pass the pages through that you want to change, and update the sitemap with these changes.</p>
+
+<p>Let’s say our SaaS product has a blog with a collection of posts that we use to highlight new features of the product and updates to it. We can amend the controller so that it returns all the posts in our blog.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">SitemapController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="k">def</span> <span class="nf">index</span>
+    <span class="vi">@posts</span> <span class="o">=</span> <span class="no">Post</span><span class="p">.</span><span class="nf">all</span>
+    <span class="n">respond_to</span> <span class="k">do</span> <span class="o">|</span><span class="nb">format</span><span class="o">|</span>
+      <span class="nb">format</span><span class="p">.</span><span class="nf">xml</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>Now that we have the posts as an instance variable, we can include it in our sitemap. Since this information changes on a regular basis, we’ll set each of our posts to have a <code class="highlighter-rouge">changefreq</code> of monthly.</p>
+
+<p>In our sitemap we can now tell search engines about these new posts on our blog.</p>
+
+<figure class="highlight"><pre><code class="language-html-erb" data-lang="html+erb">&lt;urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"&gt;
+  &lt;url&gt;
+    &lt;loc&gt;&lt;%= root_url %&gt;&lt;/loc&gt;
+    &lt;changefreq&gt;weekly&lt;/changefreq&gt;
+  &lt;/url&gt;
+  &lt;url&gt;
+    &lt;loc&gt;&lt;%= new_signup_url %&gt;&lt;/loc&gt;
+    &lt;changefreq&gt;weekly&lt;/changefreq&gt;
+  &lt;/url&gt;
+  &lt;url&gt;
+    &lt;loc&gt;&lt;%= pages_url %&gt;&lt;/loc&gt;
+    &lt;changefreq&gt;weekly&lt;/changefreq&gt;
+  &lt;/url&gt;
+  &lt;url&gt;
+    &lt;loc&gt;&lt;%= terms_url %&gt;&lt;/loc&gt;
+    &lt;changefreq&gt;weekly&lt;/changefreq&gt;
+  &lt;/url&gt;
+  &lt;url&gt;
+    &lt;loc&gt;&lt;%= privacy_url %&gt;&lt;/loc&gt;
+    &lt;changefreq&gt;weekly&lt;/changefreq&gt;
+  &lt;/url&gt;
+  
+  &lt;% @posts.each do |post| %&gt;
+    &lt;url&gt;
+      &lt;loc&gt;&lt;%= url_for(post) %&gt;&lt;/loc&gt;
+      &lt;changefreq&gt;monthly&lt;/changefreq&gt;
+    &lt;/url&gt;
+  &lt;% end %&gt;
+&lt;/urlset&gt;</code></pre></figure>
+
+<p>Now each blog post we publish will automatically be added, and the sitemap will be kept up to date without adding these new posts manually. Nice!</p>
+
+<h3 id="lets-deploy-it">Let’s deploy it!</h3>
+
+<p>Once our sitemap is complete, there’s the simple matter of deploying it to our preferred hosting stack and then submitting that sitemap to search engines. <a href="https://www.bing.com/webmaster/help/how-to-submit-sitemaps-82a15bd4">Bing</a> allows you to submit your sitemap without any other requirements, but Google does require you to have a Google account before you can submit your sitemap to them.</p>
+
+<p>You can also add your sitemap to your robots.txt file so that when a search engine crawls your site for new content, it will be redirected to the sitemap from the robots.txt file. You can include something like this in the file so that search engine crawlers can find your sitemap:</p>
+
+<figure class="highlight"><pre><code class="language-console" data-lang="console"><span class="go">Sitemap: https://www.myamazingproduct.com/sitemap.xml</span></code></pre></figure>
+
+<p>With a little investment in time and effort, your SaaS product can have a sitemap that updates on its own and requires little in the way of maintenance. Like all SEO recommendations, sitemaps aren’t the only solution to improving your search engine rankings, but they are one small change that will help round out your SEO strategy.</p>
+
+
+      <footer class="site-footer">
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a>.</span>
+      </footer>
+    </main>
+  </body>
+</html>

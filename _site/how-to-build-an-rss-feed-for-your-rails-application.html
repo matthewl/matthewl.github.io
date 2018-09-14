@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+
+    <!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>How to Build an RSS Feed for Your Rails Application | Matthew Lang</title>
+<meta name="generator" content="Jekyll v3.7.4" />
+<meta property="og:title" content="How to Build an RSS Feed for Your Rails Application" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="RSS has been overlooked as an Internet technology for the last few years. The rise of social media platforms has seen RSS uptake fall, but that doesn’t mean it’s not something to leave out of your Ruby on Rails application." />
+<meta property="og:description" content="RSS has been overlooked as an Internet technology for the last few years. The rise of social media platforms has seen RSS uptake fall, but that doesn’t mean it’s not something to leave out of your Ruby on Rails application." />
+<link rel="canonical" href="http://localhost:4000/how-to-build-an-rss-feed-for-your-rails-application.html" />
+<meta property="og:url" content="http://localhost:4000/how-to-build-an-rss-feed-for-your-rails-application.html" />
+<meta property="og:site_name" content="Matthew Lang" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2017-10-26T00:00:00+01:00" />
+<script type="application/ld+json">
+{"description":"RSS has been overlooked as an Internet technology for the last few years. The rise of social media platforms has seen RSS uptake fall, but that doesn’t mean it’s not something to leave out of your Ruby on Rails application.","@type":"BlogPosting","url":"http://localhost:4000/how-to-build-an-rss-feed-for-your-rails-application.html","headline":"How to Build an RSS Feed for Your Rails Application","dateModified":"2017-10-26T00:00:00+01:00","datePublished":"2017-10-26T00:00:00+01:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/how-to-build-an-rss-feed-for-your-rails-application.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#157878">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="stylesheet" href="/assets/css/style.css?v=f17d54814a164c30b1c73eedd61f56616b9cf6c0">
+  </head>
+  <body>
+    <header class="page-header" role="banner">
+      <h1 class="project-name"><a href="/">Matthew Lang</a></h1>
+      <h2 class="project-tagline">My web development notes</h2>
+    </header>
+
+    <main id="content" class="main-content" role="main">
+      <h1>How to Build an RSS Feed for Your Rails Application</h1>
+
+      <p>RSS has been overlooked as an Internet technology for the last few years. The rise of social media platforms has seen RSS uptake fall, but that doesn’t mean it’s not something to leave out of your Ruby on Rails application.</p>
+
+<p>An RSS feed is simply a file that lists the most recent changes to a website or a collection of articles. A lot of websites still utilise RSS feeds, and a lot of CMS platforms have this baked right into the system.</p>
+
+<p>How do you add an RSS feed to a Ruby on Rails application, though?</p>
+
+<h2 id="define-the-route">Define the route</h2>
+
+<p>The first thing we need to do is define a route for it. The route is the endpoint for the RSS feed, and it’s what others will look for when subscribing to your site. In our application’s <code class="highlighter-rouge">routes.rb</code> file, we define a route to our feed.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">get</span> <span class="s1">'/default.rss'</span><span class="p">,</span> <span class="ss">to: </span><span class="s1">'feeds#index'</span></code></pre></figure>
+
+<h2 id="create-a-controller-for-your-feed">Create a controller for your feed</h2>
+
+<p>The next step in the process is to connect the endpoint to the ActiveRecord model that we want to see the changes for.</p>
+
+<p>From our route we need to define a feeds controller and add to it an index action that will serve the content for our feed.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">FeedsController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="k">def</span> <span class="nf">index</span>
+    <span class="vi">@posts</span> <span class="o">=</span> <span class="no">Post</span><span class="p">.</span><span class="nf">published</span>
+
+    <span class="n">respond_to</span> <span class="k">do</span> <span class="o">|</span><span class="nb">format</span><span class="o">|</span>
+      <span class="nb">format</span><span class="p">.</span><span class="nf">rss</span> <span class="p">{</span> <span class="n">render</span> <span class="ss">layout: </span><span class="kp">false</span> <span class="p">}</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>Nothing here that you haven’t done before, but one thing to note is that we don’t want to render a layout with our feed, so we pass <code class="highlighter-rouge">false</code> to the layout option when rendering our feed.</p>
+
+<p>You don’t have to use a new controller for this. If you already have a controller that is accessible from the Internet and delivers the same content but to the browser, then you can use the existing controller to also deliver the feed.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">class</span> <span class="nc">PostsController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="k">def</span> <span class="nf">index</span>
+    <span class="vi">@posts</span> <span class="o">=</span> <span class="no">Post</span><span class="p">.</span><span class="nf">published</span>
+
+    <span class="n">respond_to</span> <span class="k">do</span> <span class="o">|</span><span class="nb">format</span><span class="o">|</span>
+      <span class="nb">format</span><span class="p">.</span><span class="nf">html</span> <span class="p">{</span> <span class="n">render</span> <span class="ss">:index</span> <span class="p">}</span>
+      <span class="nb">format</span><span class="p">.</span><span class="nf">rss</span> <span class="p">{</span> <span class="n">render</span> <span class="ss">layout: </span><span class="kp">false</span> <span class="p">}</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></figure>
+
+<h2 id="create-the-view-to-return-the-feed">Create the view to return the feed</h2>
+
+<p>Finally, there’s the creation of the view. The view is typically what the end-user sees in a Rails application, but in this case it’s going to be what the RSS reader sees.</p>
+
+<p>The view is going to be an XML file that will contain a number of elements typically found in an RSS feed. These are:</p>
+
+<ul>
+  <li>A unique identifier for the article</li>
+  <li>A title for the article</li>
+  <li>The body of the article</li>
+  <li>Timestamps for the article</li>
+</ul>
+
+<p>The view will look something like this:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">xml</span><span class="p">.</span><span class="nf">instruct!</span> <span class="ss">:xml</span><span class="p">,</span> <span class="ss">:version</span> <span class="o">=</span><span class="p">\</span><span class="o">&gt;</span> <span class="s1">'1.0'</span> 
+<span class="n">xml</span><span class="p">.</span><span class="nf">rss</span> <span class="ss">:version</span> <span class="o">=</span><span class="p">\</span><span class="o">&gt;</span> <span class="s1">'2.0'</span> <span class="k">do</span>
+  <span class="n">xml</span><span class="p">.</span><span class="nf">channel</span> <span class="k">do</span>
+    <span class="n">xml</span><span class="p">.</span><span class="nf">title</span> <span class="s1">'ACME Content'</span>
+    <span class="n">xml</span><span class="p">.</span><span class="nf">description</span> <span class="s1">'Our latest posts'</span>
+    <span class="n">xml</span><span class="p">.</span><span class="nf">link</span> <span class="n">root_url</span>
+
+    <span class="k">for</span> <span class="n">post</span> <span class="k">in</span> <span class="vi">@posts</span>
+      <span class="n">xml</span><span class="p">.</span><span class="nf">item</span> <span class="k">do</span>
+        <span class="n">xml</span><span class="p">.</span><span class="nf">title</span> <span class="n">post</span><span class="p">.</span><span class="nf">title</span>
+        <span class="n">xml</span><span class="p">.</span><span class="nf">description</span> <span class="n">post</span><span class="p">.</span><span class="nf">body</span>
+        <span class="n">xml</span><span class="p">.</span><span class="nf">pubDate</span> <span class="n">post</span><span class="p">.</span><span class="nf">published_at</span><span class="p">.</span><span class="nf">to_s</span><span class="p">(</span><span class="ss">:rfc822</span><span class="p">)</span>
+        <span class="n">xml</span><span class="p">.</span><span class="nf">link</span> <span class="n">post_url</span><span class="p">(</span><span class="n">post</span><span class="p">)</span>
+        <span class="n">xml</span><span class="p">.</span><span class="nf">guid</span> <span class="n">post</span><span class="p">.</span><span class="nf">id</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>There’s a couple of things to note here.</p>
+
+<p>The view uses a <em>.builder</em> extension rather than an <em>.erb</em> extension. The reason for this is we’re using the <a href="https://github.com/tenderlove/builder">Builder gem</a> to format our feed into XML.</p>
+
+<p>We’re using an RFC format of the date to help validate the feed.</p>
+
+<p>We haven’t included this in the view file, but you can cache your RSS feed for a period of time so that feed readers aren’t continually hitting the endpoint and in turn hitting your database.</p>
+
+<h2 id="auto-discovery-feeds">Auto-discovery feeds</h2>
+
+<p>Have you noticed when you subscribe to a website using an RSS reader that for some sites you can just pass in the website URL and their RSS feed will be determined from this?</p>
+
+<p>Well, the reason this works is that the website contains a link that tells the RSS reader where the sites RSS feed is.</p>
+
+<p>So how do we do this in Rails?</p>
+
+<p>Well, it’s quite simple. By using the <code class="highlighter-rouge">auto_discovery_link_tag</code> we can add our site’s RSS feed to the HTML mark-up so that RSS readers can get it.</p>
+
+<figure class="highlight"><pre><code class="language-html-erb" data-lang="html+erb">&lt;%= auto_discovery_link_tag(:rss, { controller: 'feeds/default', action: 'index' }, { title: 'Recent articles' }) %&gt;</code></pre></figure>
+
+<h2 id="testing-strategy">Testing strategy</h2>
+
+<p>Ideally, we would write some tests to ensure that the endpoint is responding with a success code and that the response itself contains the right elements for the RSS subscriber to see. A single controller test for this will suffice.</p>
+
+<h2 id="what-are-the-benefits">What are the benefits?</h2>
+
+<p>Not only a subscription channel to your website, RSS can be used as an integration endpoint for subscribers and other platforms.</p>
+
+<p>Two platforms that spring to mind are <a href="https://ifttt.com/">IFTTT</a> and <a href="https://zapier.com">Zapier</a>. Both of these platforms have channels that can act on new items published to an RSS feed.</p>
+
+<p>Social media automation is one way of utilising this, and it gives you more control over what to filter through to your social media channels as well.</p>
+
+<p>RSS is an early Internet technology, but its usefulness is often overlooked. As a way for people to subscribe to your website, it’s the first step in attracting people to your website, and the easiest one for people to engage with.</p>
+
+
+      <footer class="site-footer">
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a>.</span>
+      </footer>
+    </main>
+  </body>
+</html>

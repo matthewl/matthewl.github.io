@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+
+    <!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>The RSpec refresher | Matthew Lang</title>
+<meta name="generator" content="Jekyll v3.7.4" />
+<meta property="og:title" content="The RSpec refresher" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="I generally use Minitest for testing when I do client work, but recently I’ve been working on a project that uses RSpec as the main testing library. Now, to say that my RSpec is rusty would be an understatement, but after a few days it seems that it isn’t much different from the spec version of Minitest." />
+<meta property="og:description" content="I generally use Minitest for testing when I do client work, but recently I’ve been working on a project that uses RSpec as the main testing library. Now, to say that my RSpec is rusty would be an understatement, but after a few days it seems that it isn’t much different from the spec version of Minitest." />
+<link rel="canonical" href="http://localhost:4000/the-rspec-refresher.html" />
+<meta property="og:url" content="http://localhost:4000/the-rspec-refresher.html" />
+<meta property="og:site_name" content="Matthew Lang" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2016-12-15T00:00:00+00:00" />
+<script type="application/ld+json">
+{"description":"I generally use Minitest for testing when I do client work, but recently I’ve been working on a project that uses RSpec as the main testing library. Now, to say that my RSpec is rusty would be an understatement, but after a few days it seems that it isn’t much different from the spec version of Minitest.","@type":"BlogPosting","url":"http://localhost:4000/the-rspec-refresher.html","headline":"The RSpec refresher","dateModified":"2016-12-15T00:00:00+00:00","datePublished":"2016-12-15T00:00:00+00:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/the-rspec-refresher.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#157878">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="stylesheet" href="/assets/css/style.css?v=f17d54814a164c30b1c73eedd61f56616b9cf6c0">
+  </head>
+  <body>
+    <header class="page-header" role="banner">
+      <h1 class="project-name"><a href="/">Matthew Lang</a></h1>
+      <h2 class="project-tagline">My web development notes</h2>
+    </header>
+
+    <main id="content" class="main-content" role="main">
+      <h1>The RSpec refresher</h1>
+
+      <p>I generally use <a href="https://github.com/seattlerb/minitest">Minitest</a> for testing when I do client work, but recently I’ve been working on a project that uses <a href="http://rspec.info/">RSpec</a> as the main testing library. Now, to say that my RSpec is rusty would be an understatement, but after a few days it seems that it isn’t much different from the spec version of Minitest.</p>
+
+<p>For this post we’ll take a look at an example of an RSpec spec and all the different parts of it, as a way of familiarizing ourselves with how it works.</p>
+
+<p>Let’s look at a spec for our Ruby on Rails application, which has a resource for accounts.</p>
+
+<h3 id="describing">Describing</h3>
+
+<p>We begin with the <code class="highlighter-rouge">describe</code> method. This is one of the most common methods you’ll use in RSpec. The <code class="highlighter-rouge">describe</code> method signifies the start of an example group. An example in RSpec is a test, so our <code class="highlighter-rouge">describe</code> method is indicating that this is the beginning of a group of tests.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">describe</span> <span class="s1">'Accounts'</span> <span class="k">do</span>
+  <span class="n">describe</span> <span class="s1">'GET index'</span> <span class="k">do</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>In this case we have a top level <code class="highlighter-rouge">describe</code> block for the Accounts resource with a second nested <code class="highlighter-rouge">describe</code> block for the index action of our accounts controller.</p>
+
+<h3 id="contexts">Contexts</h3>
+
+<p>Contexts are much like <code class="highlighter-rouge">describe</code> blocks. They allow you to organise your specs so that they are more readable. They can also be helpful to signify we’re running the test under certain criteria, like whether we’re logged in or out. Let’s take a look at our accounts spec and add some context to it.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">describe</span> <span class="s1">'Accounts'</span> <span class="k">do</span>
+  <span class="n">describe</span> <span class="s1">'GET index'</span> <span class="k">do</span>
+    <span class="n">context</span> <span class="s1">'when logged in'</span> <span class="k">do</span>
+    <span class="k">end</span>
+
+    <span class="n">context</span> <span class="s1">'when logged out'</span> <span class="k">do</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>We have added two new <code class="highlighter-rouge">context</code> blocks that show for the first test we are logged in and then for the second test show that we are logged out.</p>
+
+<h3 id="the-spec">The Spec</h3>
+
+<p>Finally, there’s the example itself, the code that we run to assert that our code behaves as intended. To do this we use the <code class="highlighter-rouge">it</code> method to define our example. It should look something like this:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">it</span> <span class="s1">'shows all accounts'</span> <span class="k">do</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>Next we want to ensure that the page responds as expected. We’ll use an assertion for this:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">it</span> <span class="s1">'shows all accounts'</span> <span class="k">do</span>
+  <span class="n">get</span> <span class="n">accounts_path</span>
+
+  <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">).</span><span class="nf">to</span> <span class="n">render_template</span><span class="p">(</span><span class="ss">:index</span><span class="p">)</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>There are a few things going on here, so let’s look at them one line at a time. First, there’s the command to get the accounts path. For our controller spec this could be a get, post, put or destroy.</p>
+
+<p>This sets up our example with something to test. In this case we’re testing the response from getting the index action for the accounts resource.</p>
+
+<p>Next, there’s the assertion itself.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">).</span><span class="nf">to</span> <span class="n">render_template</span><span class="p">(</span><span class="ss">:index</span><span class="p">)</span></code></pre></figure>
+
+<p>Let’s start with the <code class="highlighter-rouge">expect</code> method. This is the new syntax for RSpec and it’s recommended to be used on all new projects you use RSpec for.</p>
+
+<p>Previous versions of RSpec would have had an example like this:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">response</span><span class="p">.</span><span class="nf">should</span> <span class="n">render_template</span><span class="p">(</span><span class="ss">:index</span><span class="p">)</span></code></pre></figure>
+
+<p>The <code class="highlighter-rouge">expect</code> method takes an argument that could be any Ruby object. The assertion comes from the <code class="highlighter-rouge">to</code> method that is called from the Ruby object we’ve passed through to response.</p>
+
+<p>In this case we’re asserting that the response will render the index template.</p>
+
+<p>We should also add a few assertions for any expected accounts we should see and what should happen if we try to access the accounts page when we’re not logged in. Let’s add those in to see our final spec.</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">describe</span> <span class="s1">'Accounts'</span> <span class="k">do</span>
+  <span class="n">describe</span> <span class="s1">'GET index'</span> <span class="k">do</span>
+    <span class="n">context</span> <span class="s1">'when logged in'</span> <span class="k">do</span>
+      <span class="n">it</span> <span class="s1">'shows all accounts'</span> <span class="k">do</span>
+        <span class="n">get</span> <span class="n">accounts_path</span>
+
+        <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">).</span><span class="nf">to</span> <span class="n">render_template</span><span class="p">(</span><span class="ss">:index</span><span class="p">)</span>
+        <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="nf">body</span><span class="p">).</span><span class="nf">to</span> <span class="n">match</span> <span class="sr">/ACC0001/</span>
+        <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="nf">body</span><span class="p">).</span><span class="nf">to</span> <span class="n">match</span> <span class="sr">/ACC0002/</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="n">context</span> <span class="s1">'when logged out'</span> <span class="k">do</span>
+      <span class="n">it</span> <span class="s1">'redirects to the login page'</span> <span class="k">do</span>
+        <span class="n">get</span> <span class="n">accounts_path</span>
+			
+        <span class="n">expect</span><span class="p">(</span><span class="n">response</span><span class="p">).</span><span class="nf">to</span> <span class="n">redirect_to</span><span class="p">(</span><span class="n">accounts_path</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre></figure>
+
+<p>So what we have now is a set of tests for our accounts index action. It’s simple and there are areas where we could improve our specs, but let’s save that for another day.</p>
+
+<p>Taking the above spec, it’s easy to see the final description for each example by concatenating the arguments passed into each <code class="highlighter-rouge">describe</code>, <code class="highlighter-rouge">context</code> and <code class="highlighter-rouge">it</code> method.</p>
+
+<figure class="highlight"><pre><code class="language-console" data-lang="console"><span class="go">Accounts GET index when logged in shows the accounts
+Accounts GET index when logged out redirects to the login page</span></code></pre></figure>
+
+<p>In other words, we expect the accounts GET index action to show a list of accounts when we’re logged in, and we expect the GET index action to redirect to the login page when we’re not logged in.</p>
+
+<p>With the use of <code class="highlighter-rouge">describe</code>, <code class="highlighter-rouge">context</code> and <code class="highlighter-rouge">it</code> we have a readable spec the describes the expected behaviour accurately.</p>
+
+<h3 id="just-a-different-syntax">Just A Different Syntax</h3>
+
+<p>RSpec isn’t that much different from any other test framework out there once you get to the essential parts you need for your test. RSpec just has a different syntax.</p>
+
+<p>My return to RSpec has meant learning its new syntax, but I am finding that the new syntax is winning me over and I’m wondering if I should use RSpec for future client work.</p>
+
+<p>Look out for the follow up post to this one in the next couple of weeks as we look at reusing code in our specs and a few other goodies I’ve picked up from using RSpec again.</p>
+
+
+      <footer class="site-footer">
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a>.</span>
+      </footer>
+    </main>
+  </body>
+</html>
