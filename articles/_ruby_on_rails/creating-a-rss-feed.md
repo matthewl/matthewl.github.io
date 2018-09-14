@@ -1,6 +1,7 @@
 ---
 layout: post
-title: How to Build an RSS Feed for Your Rails Application
+title: Creating a RSS feed for Ruby on Rails
+section: Recipes
 ---
 The rise of social media platforms has seen RSS uptake fall, but that doesn't mean it's not something to leave out of your Ruby on Rails application.
 

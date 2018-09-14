@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Testing route redirects in Rails
+section: Testing
 ---
 If it’s a line of code that I have written in a Rails application, then I’ll have a test written for it. That’s the general rule to test-driven development, and I try to stick with it as much as possible. There is, however, a part of Rails applications that I frequently see missed when it comes to testing, and that’s the routes file.
 

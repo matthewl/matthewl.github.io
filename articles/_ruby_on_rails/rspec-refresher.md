@@ -1,6 +1,7 @@
 ---
 layout: post
 title: The RSpec refresher
+section: Testing
 ---
 I generally use [Minitest](https://github.com/seattlerb/minitest) for testing when I do client work, but recently I've been working on a project that uses [RSpec](http://rspec.info/) as the preferred testing library. Now, to say that my RSpec is rusty would be an understatement, but after a few days, it seems that it isn't much different from the spec version of Minitest.
 

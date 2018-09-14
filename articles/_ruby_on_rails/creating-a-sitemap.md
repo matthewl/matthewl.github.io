@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Creating a sitemap with Ruby on Rails
+section: Recipes
 ---
 One of the easiest ways that you can improve your search engine rankings is by creating a sitemap of your SaaS product and submitting it to search engines. Sitemaps don't replace the crawlers search engines use to index sites, but they can help those crawlers by providing extra metadata on the URLs that make up your site, such as how often those pages are updated.
 

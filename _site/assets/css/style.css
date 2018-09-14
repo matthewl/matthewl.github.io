@@ -319,3 +319,5 @@ a:hover { text-decoration: underline; }
 .site-footer-credits { color: #819198; }
 
 .project-name a { color: #fff; text-decoration: none; }
+
+ul > li > p { margin: 0 !important; }

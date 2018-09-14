@@ -1,6 +1,7 @@
 ---
 layout: post
-title: How to Build a JSON Feed for Your Rails Application
+title: Creating a JSON feed for Ruby on Rails
+section: Recipes
 ---
 RSS is a stalwart and one of the early technologies of the Internet. [JSON Feed](https://jsonfeed.org/), however, is a new take on the existing RSS format. While RSS uses XML to build a feed, JSON Feed uses the simpler and more readable JSON, short for JavaScript Object Notation.
 

@@ -1,6 +1,7 @@
 ---
 layout: post
-title: Creating your custom assertions with Minitest
+title: Custom assertions with Minitest
+section: Testing
 ---
 [Minitest](https://github.com/seattlerb/minitest) is a great testing framework for new and experienced programmers. With assertions limited to a number that makes them easier to recall it levels the playing field for new programmers allowing them to get up to speed in no time.
 

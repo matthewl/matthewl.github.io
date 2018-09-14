@@ -1,6 +1,7 @@
 ---
 layout: post
-title: A place for custom controller actions
+title: Custom controller actions
+section: Recipes
 ---
 When I first started writing Rails applications, I made tonnes of coding mistakes. I cut and pasted code, my model layer usually ended up being a set of god objects, and I treated my helpers like a dumping ground for anything that didn't quite fit anywhere else. Thankfully, my code has got better over the years, but I'm still learning and not a week goes by where I don't question a bit of code that I've written.
 
